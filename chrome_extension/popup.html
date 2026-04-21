@@ -1,79 +1,497 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tracking Settings</title>
   <style>
-    body { font-family: Arial, sans-serif; width: 300px; padding: 10px; }
-    label { display: block; margin-top: 10px; font-weight: bold; }
-    input, button { width: 100%; padding: 8px; margin-top: 5px; }
-    input { width: calc(100% - 20px); }
-    button { cursor: pointer; }
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #ffffff;
+      --bg-secondary: #fafafa;
+      --bg-elevated: #f5f5f5;
+      --border: #e5e5e5;
+      --border-focus: #171717;
+      --text-primary: #171717;
+      --text-secondary: #525252;
+      --text-tertiary: #737373;
+      --accent: #171717;
+      --accent-hover: #404040;
+      --success: #16a34a;
+      --success-bg: #f0fdf4;
+      --error: #dc2626;
+      --error-bg: #fef2f2;
+      --toggle-bg: #d4d4d4;
+      --toggle-active: #171717;
+      --toggle-knob: #ffffff;
+      --input-bg: #ffffff;
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 2px 4px rgba(0,0,0,0.06);
+      --transition: 150ms ease;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0a0a0a;
+        --bg-secondary: #141414;
+        --bg-elevated: #1a1a1a;
+        --border: #262626;
+        --border-focus: #e5e5e5;
+        --text-primary: #ededed;
+        --text-secondary: #a3a3a3;
+        --text-tertiary: #737373;
+        --accent: #ededed;
+        --accent-hover: #d4d4d4;
+        --success: #22c55e;
+        --success-bg: #052e16;
+        --error: #ef4444;
+        --error-bg: #450a0a;
+        --toggle-bg: #404040;
+        --toggle-active: #ededed;
+        --toggle-knob: #171717;
+        --input-bg: #141414;
+        --shadow-sm: 0 1px 2px rgba(0,0,0,0.2);
+        --shadow-md: 0 2px 4px rgba(0,0,0,0.3);
+      }
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      width: 340px;
+      min-width: 280px;
+      padding: 20px;
+      font-size: 14px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-elevated);
+      flex-shrink: 0;
+    }
+
+    .header-icon svg {
+      width: 18px;
+      height: 18px;
+      color: var(--text-primary);
+    }
+
+    .header h1 {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    /* Sections */
+    .section {
+      margin-bottom: 20px;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-tertiary);
+      margin-bottom: 12px;
+    }
+
+    .section-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    /* Field rows */
+    .field {
+      padding: 12px 14px;
+    }
+
+    .field + .field {
+      border-top: 1px solid var(--border);
+    }
+
+    .field-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .field-hint {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+
+    /* Inputs */
+    input[type="text"],
+    input[type="url"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 8px 10px;
+      font-size: 13px;
+      font-family: inherit;
+      color: var(--text-primary);
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      outline: none;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+
+    input[type="text"]:focus,
+    input[type="url"]:focus,
+    input[type="email"]:focus,
+    input[type="password"]:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 1px var(--border-focus);
+    }
+
+    input::placeholder {
+      color: var(--text-tertiary);
+    }
+
+    /* Password field wrapper */
+    .password-wrapper {
+      position: relative;
+    }
+
+    .password-wrapper input {
+      padding-right: 38px;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 1px;
+      top: 1px;
+      bottom: 1px;
+      width: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: var(--text-tertiary);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      transition: color var(--transition);
+    }
+
+    .password-toggle:hover {
+      color: var(--text-primary);
+    }
+
+    .password-toggle svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Toggle switch */
+    .toggle-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px;
+    }
+
+    .toggle-row + .toggle-row,
+    .field + .toggle-row,
+    .toggle-row + .field {
+      border-top: 1px solid var(--border);
+    }
+
+    .toggle-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .toggle-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.4;
+    }
+
+    .toggle-hint {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      line-height: 1.4;
+      margin-top: 2px;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 40px;
+      height: 24px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      position: absolute;
+    }
+
+    .toggle-track {
+      position: absolute;
+      inset: 0;
+      background: var(--toggle-bg);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+
+    .toggle-track::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 18px;
+      height: 18px;
+      background: var(--toggle-knob);
+      border-radius: 50%;
+      transition: transform var(--transition);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+
+    .toggle-switch input:checked + .toggle-track {
+      background: var(--toggle-active);
+    }
+
+    .toggle-switch input:checked + .toggle-track::after {
+      transform: translateX(16px);
+    }
+
+    .toggle-switch input:focus-visible + .toggle-track {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+
+    /* Conditional field (auto-track owner) */
+    .conditional-field {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 200ms ease, opacity 200ms ease;
+    }
+
+    .conditional-field.visible {
+      max-height: 200px;
+      opacity: 1;
+    }
+
+    .conditional-field .field {
+      border-top: 1px solid var(--border);
+    }
+
+    /* Save button */
+    .save-btn {
+      width: 100%;
+      padding: 10px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      font-family: inherit;
+      color: var(--toggle-knob);
+      background: var(--accent);
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: background var(--transition), transform 100ms ease;
+      margin-top: 4px;
+    }
+
+    .save-btn:hover {
+      background: var(--accent-hover);
+    }
+
+    .save-btn:active {
+      transform: scale(0.98);
+    }
+
+    .save-btn:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+
+    /* Status toast */
+    .status {
+      text-align: center;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      margin-top: 8px;
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: opacity 200ms ease, transform 200ms ease;
+    }
+
+    .status.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .status.success {
+      color: var(--success);
+      background: var(--success-bg);
+    }
+
+    .status.error {
+      color: var(--error);
+      background: var(--error-bg);
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer a {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      text-decoration: none;
+      transition: color var(--transition);
+    }
+
+    .footer a:hover {
+      color: var(--text-primary);
+    }
   </style>
 </head>
 <body>
-  <h2 style="text-align: center;">Tracking Settings</h2>
 
-  <h3>Server settings</h3>
-  <div style="margin-bottom: 10px;">
-    <label for="serverUrl">Server URL:</label>
-    <input type="text" id="serverUrl" placeholder="https://mailer.cxplanner.com">
-  </div>
-
-
-  <div style="margin-bottom: 30px;">
-    <label for="secretKey">Secret Key:</label>
-    <input type="text" id="secretKey" placeholder="Enter secret key">
-  </div>
-
-
-  <h3>Personal settings</h3>
-
-  <div style="margin-bottom: 10px;">
-    <label for="customImgUrl">Custom tracking image:</label>
-    <div style="font-size: 12px; color: darkgray; font-weight: 300;">
-      This will auto change the tracking image to your custom image. It will
-      be 30px height and inserted at the bottom of the email. Otherwise we use
-      a 1x1 pixel image.
+  <!-- Header -->
+  <div class="header">
+    <div class="header-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="4" width="20" height="16" rx="2"/>
+        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+      </svg>
     </div>
-    <input type="email" id="customImgUrl" placeholder="">
+    <h1>Tracking Settings</h1>
   </div>
 
-  <div style="margin-bottom: 10px;">
-    <label for="trackingManually">
-      <div><b>Manual Tracking</b></div>
-      <div style="font-size: 12px; color: darkgray; font-weight: 300;">
-        To inject the tracking you must then click "Inject Tracking" for
-        each email you send. This is useful if you want to track only
-        specific emails.
+  <!-- Server Settings -->
+  <div class="section">
+    <div class="section-label">Server</div>
+    <div class="section-card">
+      <div class="field">
+        <label class="field-label" for="serverUrl">Server URL</label>
+        <input type="url" id="serverUrl" placeholder="https://mailer.cxplanner.com">
       </div>
-      <input type="checkbox" id="trackingManually" style="width: auto;"> <span style="font-weight: 300;">Will include a manual inject button</span>
-    </label>
-  </div>
-
-  <div style="margin-bottom: 10px;">
-    <label for="trackLinks">
-      <div><b>Track Links</b></div>
-      <div style="font-size: 12px; color: darkgray; font-weight: 300;">
-        When enabled, all links in your emails will be tracked to monitor when recipients click them.
+      <div class="field">
+        <label class="field-label" for="secretKey">Secret Key</label>
+        <div class="password-wrapper">
+          <input type="password" id="secretKey" placeholder="Enter secret key" autocomplete="off">
+          <button type="button" class="password-toggle" id="toggleSecret" aria-label="Toggle secret key visibility">
+            <svg class="icon-eye" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+            <svg class="icon-eye-off" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+              <path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/>
+              <path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/>
+              <path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/>
+              <path d="m2 2 20 20"/>
+            </svg>
+          </button>
+        </div>
       </div>
-      <input type="checkbox" id="trackLinks" style="width: auto;"> <span style="font-weight: 300;">Enable link tracking</span>
-    </label>
-  </div>
-
-  <div style="margin-bottom: 30px;">
-    <label for="trackingOwner">Auto Track Owner Email:</label>
-    <div style="font-size: 12px; color: darkgray; font-weight: 300;">
-      If you are using multiple Gmail accounts in the same browser, then
-      inserting your primary CRM email here will auto inject the tracking.
-      It's only relevant when "Manual Tracking" is disabled.
     </div>
-    <input type="email" id="trackingOwner" placeholder="Auto-track when sending from this">
   </div>
 
-  <button id="saveButton">Save Settings</button>
-  <p id="status"></p>
+  <!-- Tracking Settings -->
+  <div class="section">
+    <div class="section-label">Tracking</div>
+    <div class="section-card">
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-label">Manual Tracking</div>
+          <div class="toggle-hint">Show an "Inject Tracking" button per email instead of auto-tracking all emails.</div>
+        </div>
+        <div class="toggle-switch">
+          <input type="checkbox" id="trackingManually">
+          <label class="toggle-track" for="trackingManually"></label>
+        </div>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-label">Track Links</div>
+          <div class="toggle-hint">Monitor when recipients click links in your tracked emails.</div>
+        </div>
+        <div class="toggle-switch">
+          <input type="checkbox" id="trackLinks">
+          <label class="toggle-track" for="trackLinks"></label>
+        </div>
+      </div>
+      <div id="autoTrackField" class="conditional-field">
+        <div class="field">
+          <label class="field-label" for="trackingOwner">Auto-Track Owner Email</label>
+          <div class="field-hint">If you use multiple Gmail accounts, auto-inject tracking only when sending from this address.</div>
+          <input type="email" id="trackingOwner" placeholder="you@company.com">
+        </div>
+      </div>
+    </div>
+  </div>
 
-  <p style="font-size: 12p;text-align: center;"><a href="https://github.com/ThomasTJdev/attio_email_tracking">Thomas TJ - Github: attio_email_tracking</a></p>
+  <!-- Advanced Settings -->
+  <div class="section">
+    <div class="section-label">Advanced</div>
+    <div class="section-card">
+      <div class="field">
+        <label class="field-label" for="customImgUrl">Custom Tracking Image</label>
+        <div class="field-hint">Replace the invisible 1x1 pixel with a visible image (10px height) at the bottom of the email.</div>
+        <input type="url" id="customImgUrl" placeholder="https://example.com/logo.png">
+      </div>
+    </div>
+  </div>
+
+  <!-- Save -->
+  <button class="save-btn" id="saveButton">Save Settings</button>
+  <div class="status" id="status"></div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <a href="https://github.com/ThomasTJdev/attio_email_tracking" target="_blank" rel="noopener">Thomas TJ &middot; attio_email_tracking on GitHub</a>
+  </div>
 
   <script src="popup.js"></script>
 </body>

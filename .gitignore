@@ -8,3 +8,6 @@ dev.sh
 tests/image.png
 tests/dev*
 privatechrome/
+node_modules/
+package-lock.json
+package.json

@@ -107,24 +107,35 @@ async function getConstants() {
 
 // Function to modify the button when it's detected
 function modifyInboxSdkButton(button) {
-  button.innerText = 'Inject Tracking'; // Replace icon with text
+  button.innerText = 'Inject Tracking';
   button.style.width = 'auto';
-  // button.style.minWidth = '120px';
-  button.style.fontSize = '14px';
-  button.style.padding = '6px 12px';
+  button.style.fontSize = '13px';
+  button.style.fontWeight = '500';
+  button.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  button.style.padding = '0';
   button.style.textAlign = 'center';
-  button.style.opacity = '.9';
   button.style.cursor = 'pointer';
+  button.style.lineHeight = '1';
+  button.style.letterSpacing = '0';
 
   let parent = button.parentElement;
-  parent.style.width = '100px';
-  parent.style.minWidth = '100px';
-  parent.style.fontSize = '14px';
-  parent.style.padding = '6px 12px';
+  parent.style.width = 'auto';
+  parent.style.minWidth = 'auto';
+  parent.style.fontSize = '13px';
+  parent.style.padding = '6px 14px';
   parent.style.textAlign = 'center';
-  parent.style.backgroundColor = '#2d2626e3';
-  parent.style.color = 'white';
-  parent.style.borderRadius = '8px';
+  parent.style.backgroundColor = '#1a1a1a';
+  parent.style.color = '#ffffff';
+  parent.style.borderRadius = '18px';
+  parent.style.transition = 'background 150ms ease';
+  parent.style.whiteSpace = 'nowrap';
+
+  parent.addEventListener('mouseenter', () => {
+    parent.style.backgroundColor = '#404040';
+  });
+  parent.addEventListener('mouseleave', () => {
+    parent.style.backgroundColor = '#1a1a1a';
+  });
 }
 
 
